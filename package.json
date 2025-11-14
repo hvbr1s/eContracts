@@ -24,8 +24,11 @@
     "hardhat"
   ],
   "dependencies": {
+    "@fhevm/solidity": "^0.9.1",
+    "@fordefi/web3-provider": "^0.3.0",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "encrypted-types": "^0.0.4",
-    "@fhevm/solidity": "^0.9.1"
+    "openzeppelin-confidential-contracts": "github:OpenZeppelin/openzeppelin-confidential-contracts#release-v0.3"
   },
   "devDependencies": {
     "@fhevm/hardhat-plugin": "^0.3.0-1",
@@ -33,6 +36,7 @@
     "@nomicfoundation/hardhat-ethers": "^3.1.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
     "@nomicfoundation/hardhat-verify": "^2.1.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.20",
@@ -65,23 +69,12 @@
     "contracts"
   ],
   "scripts": {
-    "clean": "rimraf ./fhevmTemp ./artifacts ./cache ./coverage ./types ./coverage.json ./dist && npm run typechain",
-    "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
-    "coverage": "cross-env SOLIDITY_COVERAGE=true hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && npm run typechain",
-    "lint": "npm run lint:sol && npm run lint:ts && npm run prettier:check",
-    "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\"",
-    "lint:ts": "eslint --ignore-path ./.eslintignore --ext .js,.ts .",
-    "postcompile": "npm run typechain",
-    "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
-    "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
-    "test": "hardhat test",
-    "test:sepolia": "hardhat test --network sepolia",
-    "build:ts": "tsc --project tsconfig.json",
-    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
-    "chain": "hardhat node --network hardhat --no-deploy",
-    "deploy:localhost": "hardhat deploy --network localhost",
-    "deploy:sepolia": "hardhat deploy --network sepolia",
-    "verify:sepolia": "hardhat verify --network sepolia"
+    "build": "npx hardhat compile",
+    "compile": "npx hardhat compile",
+    "clean": "npx hardhat clean",
+    "deploy": "npx hardhat run --network sepolia deploy/deploy.ts",
+    "deploy-upgrade": "npx hardhat run --network sepolia deploy/deploy-upgradeable.ts",
+    "test": "npx hardhat test test/eBatcher.integration.test.ts"
   },
   "overrides": {
     "ws@>=7.0.0 <7.5.10": ">=7.5.10",

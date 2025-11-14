@@ -1,0 +1,15 @@
+[profile.default]
+src = "src"
+out = "artifacts"
+libs = ["node_modules", "lib"]
+remappings = [
+    "@fhevm/=node_modules/@fhevm/",
+    "@openzeppelin/=node_modules/@openzeppelin/",
+    "encrypted-types/=node_modules/encrypted-types/",
+    "hardhat-deploy/=node_modules/hardhat-deploy/",
+    "hardhat/=node_modules/hardhat/",
+    "openzeppelin-confidential-contracts/=node_modules/openzeppelin-confidential-contracts/",
+]
+solc_version = "0.8.27"
+[etherscan]
+mainnet = { key = "3KUNX1YPQVW51NP78JSA57PNC6VPTGGDM9" }
