@@ -23,7 +23,7 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface EToken7984Interface extends Interface {
+export interface EBucksInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "acceptOwnership"
@@ -365,11 +365,11 @@ export namespace PublicDecryptionVerifiedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface EToken7984 extends BaseContract {
-  connect(runner?: ContractRunner | null): EToken7984;
+export interface EBucks extends BaseContract {
+  connect(runner?: ContractRunner | null): EBucks;
   waitForDeployment(): Promise<this>;
 
-  interface: EToken7984Interface;
+  interface: EBucksInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,

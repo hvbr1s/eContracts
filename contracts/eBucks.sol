@@ -6,7 +6,7 @@ import {FHE, externalEuint64, euint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import {ERC7984} from "openzeppelin-confidential-contracts/contracts/token/ERC7984/ERC7984.sol";
 
-contract eToken7984 is ZamaEthereumConfig, ERC7984, Ownable2Step {
+contract eBucks is ZamaEthereumConfig, ERC7984, Ownable2Step {
     constructor(
         address owner,
         uint64 amount,

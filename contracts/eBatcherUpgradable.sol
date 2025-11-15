@@ -34,7 +34,7 @@ contract eBatcher7984Upgradeable is Initializable, UUPSUpgradeable, OwnableUpgra
         __UUPSUpgradeable_init();
         __ReentrancyGuard_init();
 
-        // Initialize FHEVM configuration (supports Ethereum mainnet, Sepolia, and local networks)
+        // Initialize FHEVM configuration
         FHE.setCoprocessor(ZamaConfig.getEthereumCoprocessorConfig());
 
         MAX_BATCH_SIZE = 20;
@@ -65,15 +65,20 @@ contract eBatcher7984Upgradeable is Initializable, UUPSUpgradeable, OwnableUpgra
         if (n == 0) revert RequireOneRecipient();
         if (n > MAX_BATCH_SIZE) revert BatchSizeExceeded();
 
-        euint64 eAmountPerRecipient = FHE.fromExternal(amountPerRecipient, inputProof);
-        require(FHE.isInitialized(eAmountPerRecipient), "eAmountPerRecipient not initialized!");
+        // Convert external encrypted input to internal euint64
+        // The inputProof must be created for this batcher contract address
+        euint64 eAmount = FHE.fromExternal(amountPerRecipient, inputProof);
+        require(FHE.isInitialized(eAmount), "eAmountPerRecipient not initialized!");
 
-        FHE.allow(eAmountPerRecipient, token);
+        // Allow the token contract to use this encrypted value
+        FHE.allow(eAmount, token);
 
+        // Now perform transfers using the internal euint64
         for (uint16 i = 0; i < n; ) {
             address to = recipients[i];
             if (to == address(0)) revert ZeroAddress();
-            IERC7984(token).confidentialTransferFrom(msg.sender, to, eAmountPerRecipient);
+            // Use the overload that accepts euint64 instead of externalEuint64
+            IERC7984(token).confidentialTransferFrom(msg.sender, to, eAmount);
             unchecked {
                 ++i;
             }
@@ -99,13 +104,23 @@ contract eBatcher7984Upgradeable is Initializable, UUPSUpgradeable, OwnableUpgra
         if (n == 0) revert RequireOneRecipient();
         if (n > MAX_BATCH_SIZE) revert BatchSizeExceeded();
 
+        // Convert all external encrypted inputs to internal euint64 values
+        euint64[] memory eAmounts = new euint64[](n);
+        for (uint16 i = 0; i < n; ) {
+            eAmounts[i] = FHE.fromExternal(amounts[i], inputProof);
+            // Allow the token contract to use each encrypted value
+            FHE.allow(eAmounts[i], token);
+            unchecked {
+                ++i;
+            }
+        }
+
+        // Perform transfers using the internal euint64 values
         for (uint16 i = 0; i < n; ) {
             address to = recipients[i];
             if (to == address(0)) revert ZeroAddress();
-            euint64 eAmount = FHE.fromExternal(amounts[i], inputProof);
-            require(FHE.isInitialized(eAmount), "eAmount not initialized!");
-            FHE.allow(eAmount, token);
-            IERC7984(token).confidentialTransferFrom(msg.sender, to, eAmount);
+            // Use the overload that accepts euint64 instead of externalEuint64
+            IERC7984(token).confidentialTransferFrom(msg.sender, to, eAmounts[i]);
 
             unchecked {
                 ++i;

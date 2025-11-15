@@ -1,6 +1,7 @@
 # Zama Token - eBatcher7984
 
-This repository contains the eBatcher7984 smart contract for batching confidential token transfers using Zama's FHE technology.
+This repository contains the eBatcher7984 smart contract for batching confidential token transfers using Zama's FHE
+technology.
 
 ## Contract Information
 
@@ -111,14 +112,19 @@ forge verify-contract \
 
 ```bash
 npx hardhat verify --network sepolia \
-  0x36Ed686F54144046376f9f7D9dAa92447EC7e963 \
+  0xC55d4AA6Da9Cc38613705c413812eb55C6b505Ed \
   "0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75"
 ```
 
-or:
+or for verifying a token:
 
 ```bash
-npx hardhat verify --network sepolia 0xCd0025b9a243104c02a46223A8d5d7b84F8aF42D "Encrypted Wrapped Ether" "eWETH" ""
+npx hardhat verify --network sepolia 0xf56E699703A1e8128567a109CA41dA7B175A3570 \
+  0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75 \
+  1000000000000 \
+  "Encrypted Bucks" \
+  "eBUCKS" \
+  ""
 ```
 
 Note: The Hardhat verification automatically uses the settings from [hardhat.config.ts](hardhat.config.ts).
@@ -126,7 +132,7 @@ Note: The Hardhat verification automatically uses the settings from [hardhat.con
 or if the contract doesn't have constructors:
 
 ```bash
-npx hardhat verify --network sepolia 0x3bbDcC93e2E3dcDF9984afb5AEBaa3de52FE5591
+npx hardhat verify --network sepolia 0x021655403f2D33F393c1cBF01BB446bF9e09f907
 ```
 
 ## Configuration
