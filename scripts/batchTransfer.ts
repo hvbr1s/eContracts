@@ -39,24 +39,33 @@ async function main() {
   console.log("📦 Batcher address:", BATCHER_ADDRESS);
 
   // Get contracts with the wallet as signer
-  const token = new ethersLib.Contract(TOKEN_ADDRESS, [
-    "function setOperator(address operator, uint48 until) external",
-    "function confidentialBalanceOf(address account) external view returns (uint256)",
-    "function makeBalancePubliclyDecryptable() external returns (uint256)",
-  ], wallet);
+  const token = new ethersLib.Contract(
+    TOKEN_ADDRESS,
+    [
+      "function setOperator(address operator, uint48 until) external",
+      "function confidentialBalanceOf(address account) external view returns (uint256)",
+      "function makeBalancePubliclyDecryptable() external returns (uint256)",
+    ],
+    wallet,
+  );
 
-  const batcher = new ethersLib.Contract(BATCHER_ADDRESS, [
-    "function batchSendTokenSameAmount(address token, address[] calldata recipients, bytes32 amountPerRecipient, bytes calldata inputProof) external",
-    "function MAX_BATCH_SIZE() external view returns (uint16)",
-    "function makeBalancePubliclyDecryptable(address token, address account) external returns (uint256)",
-  ], wallet);
+  const batcher = new ethersLib.Contract(
+    BATCHER_ADDRESS,
+    [
+      "function batchSendTokenSameAmount(address token, address[] calldata recipients, bytes32 amountPerRecipient, bytes calldata inputProof) external",
+      "function MAX_BATCH_SIZE() external view returns (uint16)",
+      "function makeBalancePubliclyDecryptable(address token, address account) external returns (uint256)",
+    ],
+    wallet,
+  );
 
   // Test configuration
   const recipients = [
     process.env.RECIPIENT_1 || "0xF659feEE62120Ce669A5C45Eb6616319D552dD93",
     process.env.RECIPIENT_2 || "0xED8315fA2Ec4Dd0dA9870Bf8CD57eBf256A90772",
+    process.env.RECIPIENT_3 || "0x8BFCF9e2764BC84DE4BBd0a0f5AAF19F47027A73",
   ];
-  const amountPerRecipient = 1000n;
+  const amountPerRecipient = 100000000n;
 
   console.log("📋 Recipients:", recipients);
   console.log("💰 Amount per recipient:", amountPerRecipient.toString());
@@ -105,13 +114,13 @@ async function main() {
   console.log("📦 Encrypted amount handle:", eAmountPerRecipient.handles[0]);
   console.log("🔐 Input proof length:", eAmountPerRecipient.inputProof?.length || 0);
 
-  // Step 3: Set batcher as operator
-  console.log("\n📝 Step 3: Setting batcher contract as operator...");
-  const until = 0xffffffffffff; // Max uint48 value
-  const operatorTx = await token.setOperator(BATCHER_ADDRESS, until);
-  const operatorReceipt = await operatorTx.wait();
-  console.log("🔗 SetOperator transaction hash:", operatorReceipt?.hash);
-  console.log("✅ Operator set confirmed");
+  // // Step 3: Set batcher as operator
+  // console.log("\n📝 Step 3: Setting batcher contract as operator...");
+  // const until = 0xffffffffffff; // Max uint48 value
+  // const operatorTx = await token.setOperator(BATCHER_ADDRESS, until);
+  // const operatorReceipt = await operatorTx.wait();
+  // console.log("🔗 SetOperator transaction hash:", operatorReceipt?.hash);
+  // console.log("✅ Operator set confirmed");
 
   // Step 4: Execute batch transfer
   console.log("\n📤 Step 4: Executing batch transfer...");
@@ -120,7 +129,7 @@ async function main() {
       TOKEN_ADDRESS,
       recipients,
       eAmountPerRecipient.handles[0],
-      eAmountPerRecipient.inputProof
+      eAmountPerRecipient.inputProof,
     );
 
     console.log("⏳ Waiting for transaction confirmation...");
@@ -129,31 +138,8 @@ async function main() {
     console.log("🔗 Transaction hash:", batchReceipt?.hash);
     console.log("⛽ Gas used:", batchReceipt?.gasUsed.toString());
 
-    // Step 5: Verify recipient balances (optional)
-    console.log("\n📊 Step 5: Verifying recipient balances...");
-
-    for (const recipient of recipients) {
-      try {
-        // Make recipient balance publicly decryptable
-        console.log(`\n🔍 Checking balance for ${recipient}...`);
-        const makeRecipientTx = await batcher.makeBalancePubliclyDecryptable(TOKEN_ADDRESS, recipient);
-        await makeRecipientTx.wait();
-
-        // Wait for processing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Decrypt balance
-        const recipientBalance = await token.confidentialBalanceOf(recipient);
-        const recipientBalanceHandle = ethersLib.toBeHex(recipientBalance, 32);
-        const decryptionResult = await hre.fhevm.publicDecrypt([recipientBalanceHandle]);
-        const decryptedRecipientBalance = decryptionResult.clearValues[recipientBalanceHandle as `0x${string}`];
-        console.log(`✅ ${recipient}: ${decryptedRecipientBalance?.toString() || "0"} tokens`);
-      } catch (error: any) {
-        console.log(`⚠️  Could not verify balance for ${recipient}: ${error.message}`);
-      }
-    }
-
     console.log("\n🎉 Batch transfer test completed successfully!");
+    console.log("💡 Recipient balances remain confidential - recipients can check their own balances if desired");
   } catch (error: any) {
     console.error("\n❌ Batch transfer failed:", error.message);
 
