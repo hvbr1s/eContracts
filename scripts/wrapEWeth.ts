@@ -4,10 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// METAMASK WALLET
 const PK = process.env.METAMASK_PK!;
-
-// CONTRACT
 const EWETH_CONTRACT = "0xCd0025b9a243104c02a46223A8d5d7b84F8aF42D";
 
 const EWETH_ABI = [
