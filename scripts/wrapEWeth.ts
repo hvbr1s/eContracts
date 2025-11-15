@@ -8,7 +8,6 @@ dotenv.config();
 const PK = process.env.METAMASK_PK!;
 
 // CONTRACT
-// const EWETH_CONTRACT = "0x08036B36B2d19Fe06D3c86b4c530289bE17FDC20";
 const EWETH_CONTRACT = "0xCd0025b9a243104c02a46223A8d5d7b84F8aF42D";
 
 const EWETH_ABI = [
