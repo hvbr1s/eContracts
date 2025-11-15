@@ -114,9 +114,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EBatcher7984Upgradeable__factory>;
     getContractFactory(
-      name: "EToken7984",
+      name: "EBucks",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.EToken7984__factory>;
+    ): Promise<Contracts.EBucks__factory>;
     getContractFactory(
       name: "EWETH",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -260,10 +260,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.EBatcher7984Upgradeable>;
     getContractAt(
-      name: "EToken7984",
+      name: "EBucks",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.EToken7984>;
+    ): Promise<Contracts.EBucks>;
     getContractAt(
       name: "EWETH",
       address: string | ethers.Addressable,
@@ -386,9 +386,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EBatcher7984Upgradeable>;
     deployContract(
-      name: "EToken7984",
+      name: "EBucks",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.EToken7984>;
+    ): Promise<Contracts.EBucks>;
     deployContract(
       name: "EWETH",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -532,10 +532,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EBatcher7984Upgradeable>;
     deployContract(
-      name: "EToken7984",
+      name: "EBucks",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.EToken7984>;
+    ): Promise<Contracts.EBucks>;
     deployContract(
       name: "EWETH",
       args: any[],

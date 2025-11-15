@@ -27,6 +27,7 @@
     "@fhevm/solidity": "^0.9.1",
     "@fordefi/web3-provider": "^0.3.0",
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@openzeppelin/contracts": "^5.4.0",
     "encrypted-types": "^0.0.4",
     "openzeppelin-confidential-contracts": "github:OpenZeppelin/openzeppelin-confidential-contracts#release-v0.3"
   },
@@ -74,7 +75,9 @@
     "clean": "npx hardhat clean",
     "deploy": "npx hardhat run --network sepolia deploy/deploy.ts",
     "deploy-upgrade": "npx hardhat run --network sepolia deploy/deploy-upgradeable.ts",
-    "test": "npx hardhat test test/eBatcher.integration.test.ts"
+    "test": "npx hardhat test test/eBatcher.integration.test.ts",
+    "batch": "npx hardhat run scripts/batchTransfer.ts --network sepolia",
+    "wrap": "npx hardhat run scripts/wrapEWeth.ts --network sepolia"
   },
   "overrides": {
     "ws@>=7.0.0 <7.5.10": ">=7.5.10",

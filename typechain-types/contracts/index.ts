@@ -4,5 +4,5 @@
 import type * as eBatcherUpgradableSol from "./eBatcherUpgradable.sol";
 export type { eBatcherUpgradableSol };
 export type { EBatcher7984 } from "./EBatcher7984";
-export type { EToken7984 } from "./EToken7984";
+export type { EBucks } from "./EBucks";
 export type { EWETH } from "./EWETH";
