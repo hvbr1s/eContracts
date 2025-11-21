@@ -114,17 +114,4 @@ contract eWETH is ZamaEthereumConfig, ERC7984 {
         FHE.makePubliclyDecryptable(balance);
         return balance;
     }
-
-    /**
-     * @notice Makes a specific account's balance publicly decryptable (anyone can call)
-     * @dev Useful for verification and debugging purposes in FHEVM v0.9
-     * Note: This allows public visibility of the encrypted balance once decrypted
-     * @param account The account whose balance to make publicly decryptable
-     * @return The encrypted balance handle that can now be publicly decrypted
-     */
-    function makeBalancePubliclyDecryptableFor(address account) external returns (euint64) {
-        euint64 balance = confidentialBalanceOf(account);
-        FHE.makePubliclyDecryptable(balance);
-        return balance;
-    }
 }

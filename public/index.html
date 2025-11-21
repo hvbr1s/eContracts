@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eBatcher</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-bar-text">eBtacher</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+
+      <div class="window-body">
+        <!-- Connection Section -->
+        <div class="field-row" style="margin-bottom: 20px">
+          <button id="connectWallet" class="btn">Connect Wallet</button>
+          <span id="walletStatus" style="margin-left: 10px">Not connected</span>
+        </div>
+
+        <!-- Configuration Section -->
+        <fieldset style="margin-bottom: 15px">
+          <legend>Configuration</legend>
+          <div class="field-row">
+            <label for="tokenAddress">Token Address:</label>
+            <input id="tokenAddress" type="text" placeholder="0x..." style="width: 100%" />
+          </div>
+        </fieldset>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-button active" data-tab="balance">Check Balance</button>
+          <button class="tab-button" data-tab="operator">Set Operator</button>
+          <button class="tab-button" data-tab="batchSame">Batch (Same Amount)</button>
+          <button class="tab-button" data-tab="batchDiff">Batch (Different Amounts)</button>
+        </div>
+
+        <!-- Tab Content: Check Balance -->
+        <div id="balance" class="tab-content active">
+          <fieldset>
+            <legend>Check Encrypted Balance</legend>
+            <div class="field-row">
+              <button id="checkBalance" class="btn">Check Balance</button>
+            </div>
+            <div id="balanceResult" class="result-box"></div>
+          </fieldset>
+        </div>
+
+        <!-- Tab Content: Set Operator -->
+        <div id="operator" class="tab-content">
+          <fieldset>
+            <legend>Approve Batcher as Operator</legend>
+            <div class="field-row">
+              <label for="operatorUntil">Valid Until (timestamp):</label>
+              <input id="operatorUntil" type="text" value="281474976710655" />
+              <small style="display: block; margin-top: 5px">Default: max uint48 (permanent)</small>
+            </div>
+            <div class="field-row">
+              <button id="setOperator" class="btn">Set Operator</button>
+            </div>
+            <div id="operatorResult" class="result-box"></div>
+          </fieldset>
+        </div>
+
+        <!-- Tab Content: Batch Same Amount -->
+        <div id="batchSame" class="tab-content">
+          <fieldset>
+            <legend>Batch Transfer (Same Amount)</legend>
+            <div class="field-row">
+              <label for="recipientsSame">Recipients (one address per line):</label>
+              <textarea
+                id="recipientsSame"
+                rows="5"
+                style="width: 100%"
+                placeholder="0x...&#10;0x...&#10;0x..."
+              ></textarea>
+            </div>
+            <div class="field-row">
+              <label for="amountSame">Amount per recipient:</label>
+              <input id="amountSame" type="text" value="100000000" />
+            </div>
+            <div class="field-row">
+              <button id="batchTransferSame" class="btn">Send Batch (Same Amount)</button>
+            </div>
+            <div id="batchSameResult" class="result-box"></div>
+          </fieldset>
+        </div>
+
+        <!-- Tab Content: Batch Different Amounts -->
+        <div id="batchDiff" class="tab-content">
+          <fieldset>
+            <legend>Batch Transfer (Different Amounts)</legend>
+            <div class="field-row">
+              <label for="recipientsDiff">Recipients & Amounts (address,amount per line):</label>
+              <textarea
+                id="recipientsDiff"
+                rows="5"
+                style="width: 100%"
+                placeholder="0x...,100000000&#10;0x...,200000000&#10;0x...,150000000"
+              ></textarea>
+            </div>
+            <div class="field-row">
+              <button id="batchTransferDiff" class="btn">Send Batch (Different Amounts)</button>
+            </div>
+            <div id="batchDiffResult" class="result-box"></div>
+          </fieldset>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <p class="status-bar-field">Ready</p>
+          <p class="status-bar-field" id="networkStatus">Network: Not connected</p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

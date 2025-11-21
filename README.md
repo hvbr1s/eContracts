@@ -1,77 +1,237 @@
 # Zama Token - eBatcher7984
 
-This repository contains the eBatcher7984 smart contract for batching confidential token transfers using Zama's FHE
-technology.
+Smart contracts for batching confidential token transfers using Zama's FHE technology.
 
-## Contract Information
+## Deployed Contracts (Sepolia)
 
-### Non-Upgradeable Deployment (Legacy)
+**eBatcherUpgradeable**
+- Proxy: `0x49239Eaf11c688152996a2A380AB715ac3583A4b`
+- Implementation: `0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea`
 
-- **Contract Name**: eBatcher7984
-- **Network**: Ethereum Sepolia
-- **Deployed Address**: `0x6c2C8A3Bd837f8F0c3286885ea17c17392af91df`
-- **Owner Address**: `0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75`
-- **Etherscan**: <https://sepolia.etherscan.io/address/0x6c2c8a3bd837f8f0c3286885ea17c17392af91df>
+**eWrapper**: `0x11990923083aE0365Fb713922C506C396Bb6a29d`
 
-### Upgradeable Deployment (Current)
+**eBucks**: `0x0a10119bb664d9A153bd55F8d234c888C76181CC`
 
-- **Contract Name**: eBatcher7984Upgradeable
-- **Network**: Ethereum Sepolia
-- **Proxy Address**: `0xD49a2F55cDd08F5e248b68C2e0645B2bE6fb8Da9`
-- **Implementation Address**: `0xCA3CD61d243D5B08f342C304ADD03dF5859eb6f7`
-- **Owner Address**: `0x8BFCF9e2764BC84DE4BBd0a0f5AAF19F47027A73`
-- **Proxy Etherscan**: <https://sepolia.etherscan.io/address/0xD49a2F55cDd08F5e248b68C2e0645B2bE6fb8Da9>
-- **Implementation Etherscan**: <https://sepolia.etherscan.io/address/0xCA3CD61d243D5B08f342C304ADD03dF5859eb6f7>
+## Contract Features
 
-## Deployment
+- **batchSendTokenSameAmount**: Send the same encrypted token amount to multiple recipients
+- **batchSendTokenDifferentAmounts**: Send different encrypted token amounts to multiple recipients
+- **tokenRescue**: Owner-only function to rescue tokens accidentally sent to the contract
+- **changeMaxBatchSize**: Owner-only function to modify the maximum batch size (between 2 and 10)
 
-The contract is deployed using Hardhat with the Fordefi Web3 provider.
+## Web Interface
 
-### Deploy Commands
+A minimalistic Windows 95-inspired web interface is available in the [public/](public/) folder for interacting with the batch transfer contracts.
 
-Non-upgradeable version:
+### Features
+
+- Check encrypted token balances
+- Set batcher contract as operator
+- Send batch transfers with same amount to multiple recipients
+- Send batch transfers with different amounts to multiple recipients
+- Full FHEVM encryption support
+- MetaMask integration
+
+### Quick Start
+
+#### 1. Install Dependencies
 
 ```bash
-npx hardhat run deploy/deploy.ts --network sepolia
+npm install
 ```
 
-Upgradeable version:
+#### 2. Run Local Server
+
+```bash
+npm run serve
+```
+
+This will start a local HTTP server on port 8080.
+
+#### 3. Open in Browser
+
+Navigate to: `http://localhost:8080`
+
+#### 4. Connect Wallet
+
+Click "Connect Wallet" to connect your MetaMask wallet to the application.
+
+### Web UI Configuration
+
+Update the following addresses in the UI:
+
+- **Token Address**: Your eBucks token contract address
+- **Batcher Address**: Your eBatcher contract address
+
+Default values are provided but can be changed in the Configuration section.
+
+### Usage
+
+#### Check Balance
+
+1. Navigate to the "Check Balance" tab
+2. Click "Check Balance"
+3. Approve the transaction in MetaMask
+4. Wait for the balance to be decrypted
+
+#### Set Operator
+
+1. Navigate to the "Set Operator" tab
+2. (Optional) Adjust the "Valid Until" timestamp
+3. Click "Set Operator"
+4. Approve the transaction in MetaMask
+
+#### Batch Transfer (Same Amount)
+
+1. Navigate to the "Batch (Same Amount)" tab
+2. Enter recipient addresses (one per line)
+3. Enter the amount per recipient
+4. Click "Send Batch (Same Amount)"
+5. Approve the transaction in MetaMask
+
+#### Batch Transfer (Different Amounts)
+
+1. Navigate to the "Batch (Different Amounts)" tab
+2. Enter recipients and amounts in format: `address,amount` (one per line)
+3. Click "Send Batch (Different Amounts)"
+4. Approve the transaction in MetaMask
+
+### Web UI Deployment
+
+For production deployment, you can use any static hosting service:
+
+#### Vercel
+
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+#### Netlify
+
+1. Build is not required (static files)
+2. Deploy the `public` folder directly
+
+#### GitHub Pages
+
+1. Push the `public` folder to a GitHub repository
+2. Enable GitHub Pages in repository settings
+3. Set the source to the `public` folder
+
+#### Self-Hosted
+
+Serve the `public` folder using any web server:
+
+```bash
+# Using Python
+python -m http.server 8080 --directory public
+
+# Using PHP
+php -S localhost:8080 -t public
+
+# Using Node.js http-server
+npx http-server public -p 8080
+```
+
+### Important Notes
+
+#### FHEVM Instance Persistence
+
+The FHEVM instance is initialized when you connect your wallet and will persist throughout your session. The instance includes:
+
+- Chain ID configuration
+- Public key from the Gateway contract
+- Encryption/decryption capabilities
+
+#### Network Requirements
+
+- The app requires connection to a network with FHEVM support
+- Gateway contract must be deployed at: `0x0000000000000000000000000000000000000044`
+- Ensure your MetaMask is connected to the correct network
+
+#### Browser Compatibility
+
+- Modern browsers with ES6 module support
+- MetaMask extension installed
+- JavaScript enabled
+
+### Troubleshooting
+
+#### "MetaMask not detected"
+
+- Install MetaMask browser extension
+- Refresh the page after installation
+
+#### "Connection failed"
+
+- Check that you're on the correct network
+- Ensure the network has FHEVM support
+
+#### "Balance not ready yet"
+
+- The coprocessor may need more time
+- Wait a few seconds and try again
+
+#### Transaction Failures
+
+- Check you have sufficient ETH for gas
+- Verify the batcher is set as operator
+- Ensure sufficient token balance
+
+### Web UI File Structure
+
+```text
+public/
+├── index.html      # Main HTML structure
+├── styles.css      # Windows 95-inspired styling
+├── app.js          # Application logic and FHEVM integration
+└── README.md       # Web UI documentation
+```
+
+### Technologies Used
+
+- **Ethers.js v6**: Ethereum interaction
+- **fhevmjs v0.9**: FHEVM encryption/decryption
+- **Pure HTML/CSS/JS**: No build step required
+- **ES6 Modules**: Modern JavaScript imports
+
+## Contract Deployment
+
+Deploy upgradeable contracts:
 
 ```bash
 npm run deploy-upgrade
 ```
 
-See [deploy/deploy-upgradeable.ts](deploy/deploy-upgradeable.ts) for the upgradeable deployment script.
+See [deploy/deploy-upgradeable.ts](deploy/deploy-upgradeable.ts) for deployment details.
 
-## Verification
+## Configuration
 
-The contract uses specific compiler settings that must be matched for successful verification:
+### Environment Variables
+
+Create a `.env` file:
+
+```bash
+FORDEFI_API_USER_MACBOOK_PRO_BOT=your_fordefi_api_token
+FORDEFI_EVM_VAULT_ADDRESS=your_vault_address
+ETHERSCAN_API_KEY=your_etherscan_api_key
+```
+
+### Compiler Settings
 
 - **Solidity Version**: 0.8.27
 - **Optimizer**: Enabled with 10000 runs
 - **EVM Version**: prague
 
-### Verify Non-Upgradeable Contract with Foundry
+See [hardhat.config.ts](hardhat.config.ts) for full configuration.
+
+## Verification
+
+### Verify eBatcherUpgradeable Implementation
 
 ```bash
 forge verify-contract \
-  0x6c2C8A3Bd837f8F0c3286885ea17c17392af91df \
-  contracts/eBatcher7984.sol:eBatcher7984 \
-  --chain sepolia \
-  --compiler-version 0.8.27 \
-  --constructor-args $(cast abi-encode "constructor(address)" "0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75") \
-  --optimizer-runs 10000 \
-  --evm-version prague \
-  --watch
-```
-
-### Verify Upgradeable Contract with Foundry
-
-#### Step 1: Verify the Implementation Contract
-
-```bash
-forge verify-contract \
-  0x36Ed686F54144046376f9f7D9dAa92447EC7e963 \
+  0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea \
   contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
   --chain sepolia \
   --compiler-version 0.8.27 \
@@ -80,110 +240,11 @@ forge verify-contract \
   --watch
 ```
 
-#### Step 2: Verify the Proxy Contract
+### Verify eWrapper (eWETH)
 
 ```bash
 forge verify-contract \
-  0xD49a2F55cDd08F5e248b68C2e0645B2bE6fb8Da9 \
-  @openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy \
-  --chain sepolia \
-  --compiler-version 0.8.27 \
-  --constructor-args $(cast abi-encode "constructor(address,bytes)" "0xCA3CD61d243D5B08f342C304ADD03dF5859eb6f7" $(cast calldata "initialize(address)" "0x8BFCF9e2764BC84DE4BBd0a0f5AAF19F47027A73")) \
-  --optimizer-runs 200 \
-  --watch
-```
-
-Alternatively, use Etherscan's "Verify as Proxy" feature after verifying the implementation.
-
-### Verify eToken7984 Contract with Foundry
-
-```bash
-forge verify-contract \
-  0x837565f0A3456143C01505c3d339Bc43bFAbf533 \
-  contracts/eToken7984.sol:eToken7984 \
-  --chain sepolia \
-  --compiler-version 0.8.27 \
-  --optimizer-runs 10000 \
-  --evm-version prague \
-  --watch
-```
-
-### Verify with Hardhat
-
-```bash
-npx hardhat verify --network sepolia \
-  0xC55d4AA6Da9Cc38613705c413812eb55C6b505Ed \
-  "0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75"
-```
-
-or for verifying a token:
-
-```bash
-npx hardhat verify --network sepolia 0xf56E699703A1e8128567a109CA41dA7B175A3570 \
-  0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75 \
-  1000000000000 \
-  "Encrypted Bucks" \
-  "eBUCKS" \
-  ""
-```
-
-Note: The Hardhat verification automatically uses the settings from [hardhat.config.ts](hardhat.config.ts).
-
-or if the contract doesn't have constructors:
-
-```bash
-npx hardhat verify --network sepolia 0x021655403f2D33F393c1cBF01BB446bF9e09f907
-```
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file with the following variables:
-
-```bash
-FORDEFI_API_USER_MACBOOK_PRO_BOT=your_fordefi_api_token
-FORDEFI_EVM_VAULT_ADDRESS=your_vault_address
-ETHERSCAN_API_KEY=your_etherscan_api_key
-```
-
-### Hardhat Configuration
-
-The contract compilation settings are defined in [hardhat.config.ts](hardhat.config.ts):
-
-```typescript
-solidity: {
-  version: "0.8.27",
-  settings: {
-    optimizer: {
-      enabled: true,
-      runs: 10000,
-    },
-    evmVersion: "prague",
-  },
-}
-```
-
-## Contract Features
-
-The eBatcher7984 contract provides the following functionality:
-
-- **batchSendTokenSameAmount**: Send the same encrypted token amount to multiple recipients
-- **batchSendTokenDifferentAmounts**: Send different encrypted token amounts to multiple recipients
-- **tokenRescue**: Owner-only function to rescue tokens accidentally sent to the contract
-- **changeMaxBatchSize**: Owner-only function to modify the maximum batch size (between 2 and 10)
-
-## Security
-
-- Uses OpenZeppelin's ReentrancyGuard and Ownable contracts
-- Implements Zama's FHE (Fully Homomorphic Encryption) for confidential transfers
-- Complies with ERC-7984 standard for confidential token transfers
-
-## Verify eWETH contract
-
-```bash
-forge verify-contract \
-  0x08036B36B2d19Fe06D3c86b4c530289bE17FDC20 \
+  0x11990923083aE0365Fb713922C506C396Bb6a29d \
   contracts/eWETH.sol:eWETH \
   --chain sepolia \
   --compiler-version 0.8.27 \
@@ -192,3 +253,28 @@ forge verify-contract \
   --constructor-args $(cast abi-encode "constructor(string,string,string)" "Encrypted Wrapped Ether" "eWETH" "") \
   --watch
 ```
+
+### Verify eBucks
+
+```bash
+npx hardhat verify --network sepolia 0x0a10119bb664d9A153bd55F8d234c888C76181CC
+```
+
+For proxy verification, use Etherscan's "Verify as Proxy" feature after verifying the implementation.
+
+## Security
+
+- OpenZeppelin's ReentrancyGuard and Ownable contracts
+- Zama's FHE (Fully Homomorphic Encryption) for confidential transfers
+- ERC-7984 standard compliance
+
+### Security Considerations
+
+1. **Never commit private keys**: The UI uses MetaMask for signing
+2. **Verify addresses**: Always double-check token and batcher addresses
+3. **Test first**: Use testnet before mainnet deployment
+4. **HTTPS in production**: Always use HTTPS for production deployments
+
+## License
+
+BSD-3-Clause-Clear

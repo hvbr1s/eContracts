@@ -32,7 +32,6 @@ export interface EBatcher7984UpgradeableInterface extends Interface {
       | "batchSendTokenSameAmount"
       | "changeMaxBatchSize"
       | "initialize"
-      | "makeBalancePubliclyDecryptable"
       | "owner"
       | "protocolId"
       | "proxiableUUID"
@@ -76,10 +75,6 @@ export interface EBatcher7984UpgradeableInterface extends Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "makeBalancePubliclyDecryptable",
-    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -129,10 +124,6 @@ export interface EBatcher7984UpgradeableInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "makeBalancePubliclyDecryptable",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "protocolId", data: BytesLike): Result;
   decodeFunctionResult(
@@ -310,12 +301,6 @@ export interface EBatcher7984Upgradeable extends BaseContract {
 
   initialize: TypedContractMethod<[owner_: AddressLike], [void], "nonpayable">;
 
-  makeBalancePubliclyDecryptable: TypedContractMethod<
-    [token: AddressLike, account: AddressLike],
-    [string],
-    "nonpayable"
-  >;
-
   owner: TypedContractMethod<[], [string], "view">;
 
   protocolId: TypedContractMethod<[], [bigint], "view">;
@@ -389,13 +374,6 @@ export interface EBatcher7984Upgradeable extends BaseContract {
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<[owner_: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "makeBalancePubliclyDecryptable"
-  ): TypedContractMethod<
-    [token: AddressLike, account: AddressLike],
-    [string],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

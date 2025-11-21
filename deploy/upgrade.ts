@@ -37,9 +37,9 @@ async function main() {
   // Replace this with your deployed proxy address
   const PROXY_ADDRESS = "YOUR_PROXY_ADDRESS_HERE";
 
-  let provider = await getProvider(config);
+  const provider = await getProvider(config);
   if (!provider) throw new Error("Failed to initialize provider");
-  let web3Provider = new hre.ethers.BrowserProvider(provider);
+  const web3Provider = new hre.ethers.BrowserProvider(provider);
 
   const deployer = await web3Provider.getSigner();
 

@@ -44,7 +44,6 @@ export interface EWETHInterface extends Interface {
       | "discloseEncryptedAmount"
       | "isOperator"
       | "makeBalancePubliclyDecryptable"
-      | "makeBalancePubliclyDecryptableFor"
       | "name"
       | "requestDiscloseEncryptedAmount"
       | "setOperator"
@@ -132,10 +131,6 @@ export interface EWETHInterface extends Interface {
     functionFragment: "makeBalancePubliclyDecryptable",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "makeBalancePubliclyDecryptableFor",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "requestDiscloseEncryptedAmount",
@@ -220,10 +215,6 @@ export interface EWETHInterface extends Interface {
   decodeFunctionResult(functionFragment: "isOperator", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "makeBalancePubliclyDecryptable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "makeBalancePubliclyDecryptableFor",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -518,12 +509,6 @@ export interface EWETH extends BaseContract {
     "nonpayable"
   >;
 
-  makeBalancePubliclyDecryptableFor: TypedContractMethod<
-    [account: AddressLike],
-    [string],
-    "nonpayable"
-  >;
-
   name: TypedContractMethod<[], [string], "view">;
 
   requestDiscloseEncryptedAmount: TypedContractMethod<
@@ -680,9 +665,6 @@ export interface EWETH extends BaseContract {
   getFunction(
     nameOrSignature: "makeBalancePubliclyDecryptable"
   ): TypedContractMethod<[], [string], "nonpayable">;
-  getFunction(
-    nameOrSignature: "makeBalancePubliclyDecryptableFor"
-  ): TypedContractMethod<[account: AddressLike], [string], "nonpayable">;
   getFunction(
     nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;

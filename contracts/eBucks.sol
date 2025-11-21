@@ -26,23 +26,4 @@ contract eBucks is ZamaEthereumConfig, ERC7984, Ownable2Step {
         transferred = super._update(from, to, amount);
         FHE.allow(confidentialTotalSupply(), owner());
     }
-
-    /// @notice Makes the caller's balance publicly decryptable for verification purposes
-    /// @dev This allows anyone to decrypt the balance off-chain using the relayer SDK
-    /// @return The encrypted balance handle that can now be publicly decrypted
-    function makeBalancePubliclyDecryptable() external returns (euint64) {
-        euint64 balance = confidentialBalanceOf(msg.sender);
-        FHE.makePubliclyDecryptable(balance);
-        return balance;
-    }
-
-    /// @notice Makes a specific account's balance publicly decryptable (owner only)
-    /// @dev Useful for debugging and verification by contract owner
-    /// @param account The account whose balance to make publicly decryptable
-    /// @return The encrypted balance handle that can now be publicly decrypted
-    function makeBalancePubliclyDecryptableFor(address account) external onlyOwner returns (euint64) {
-        euint64 balance = confidentialBalanceOf(account);
-        FHE.makePubliclyDecryptable(balance);
-        return balance;
-    }
 }

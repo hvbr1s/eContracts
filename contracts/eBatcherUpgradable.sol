@@ -161,20 +161,6 @@ contract eBatcher7984Upgradeable is Initializable, UUPSUpgradeable, OwnableUpgra
         emit NewMaxBatchSize(size);
     }
 
-    /// @notice Makes a user's token balance publicly decryptable for verification
-    /// @dev This is useful for debugging and verification purposes in FHEVM v0.9
-    /// @param token The ERC7984 token contract address
-    /// @param account The account whose balance to make publicly decryptable
-    /// @return The encrypted balance handle that can now be publicly decrypted
-    function makeBalancePubliclyDecryptable(address token, address account) external returns (euint64) {
-        if (token == address(0)) revert ZeroAddress();
-        if (account == address(0)) revert ZeroAddress();
-
-        euint64 balance = IERC7984(token).confidentialBalanceOf(account);
-        FHE.makePubliclyDecryptable(balance);
-        return balance;
-    }
-
     /// @notice Returns the current version of the contract
     function version() public pure returns (string memory) {
         return "0.1.0";

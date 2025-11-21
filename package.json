@@ -55,6 +55,7 @@
     "hardhat": "^2.26.0",
     "hardhat-deploy": "^0.11.45",
     "hardhat-gas-reporter": "^2.3.0",
+    "http-server": "^14.1.1",
     "mocha": "^11.7.1",
     "prettier": "^3.6.2",
     "prettier-plugin-solidity": "^2.1.0",
@@ -77,7 +78,9 @@
     "deploy-upgrade": "npx hardhat run --network sepolia deploy/deploy-upgradeable.ts",
     "test": "npx hardhat test test/eBatcher.integration.test.ts",
     "batch": "npx hardhat run scripts/batchTransfer.ts --network sepolia",
-    "wrap": "npx hardhat run scripts/wrapEWeth.ts --network sepolia"
+    "wrap": "npx hardhat run scripts/wrapEWeth.ts --network sepolia",
+    "check": "npx hardhat run scripts/checkBalance.ts --network sepolia",
+    "serve": "npx http-server public -p 8080 -c-1"
   },
   "overrides": {
     "ws@>=7.0.0 <7.5.10": ">=7.5.10",

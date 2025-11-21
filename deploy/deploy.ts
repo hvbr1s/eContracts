@@ -33,23 +33,22 @@ const config: FordefiProviderConfig = {
 };
 
 async function main() {
-  let provider = await getProvider(config);
+  const provider = await getProvider(config);
   if (!provider) throw new Error("Failed to initialize provider");
-  let web3Provider = new hre.ethers.BrowserProvider(provider);
+  const web3Provider = new hre.ethers.BrowserProvider(provider);
 
   const signer = await web3Provider.getSigner();
-  const signerAddress = await signer.getAddress();
-  const factory = await hre.ethers.getContractFactory("eBucks", signer);
+  const factory = await hre.ethers.getContractFactory("eWETH", signer);
   console.log("Deploying contract...");
 
-  const initialAmount = 1000000000000; // 1 millie (6 decimals)
-  const tokenName = "Encrypted Bucks";
-  const tokenSymbol = "eBUCKS";
+  //const initialAmount = 1000000000000; // 1 millie (6 decimals)
+  const tokenName = "Encrypted Wrapped Ether";
+  const tokenSymbol = "eWETH";
   const tokenURI = "";
 
   const contract = await factory.deploy(
-    "0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75", // owner
-    initialAmount, // amount
+    // "0x83c1C2a52d56dFb958C52831a3D683cFAfC34c75", // owner
+    // initialAmount, // amount
     tokenName, // name
     tokenSymbol, // symbol
     tokenURI, // tokenURI

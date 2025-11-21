@@ -42,8 +42,6 @@ export interface EBucksInterface extends Interface {
       | "decimals"
       | "discloseEncryptedAmount"
       | "isOperator"
-      | "makeBalancePubliclyDecryptable"
-      | "makeBalancePubliclyDecryptableFor"
       | "name"
       | "owner"
       | "pendingOwner"
@@ -126,14 +124,6 @@ export interface EBucksInterface extends Interface {
   encodeFunctionData(
     functionFragment: "isOperator",
     values: [AddressLike, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "makeBalancePubliclyDecryptable",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "makeBalancePubliclyDecryptableFor",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -221,14 +211,6 @@ export interface EBucksInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isOperator", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "makeBalancePubliclyDecryptable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "makeBalancePubliclyDecryptableFor",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -504,18 +486,6 @@ export interface EBucks extends BaseContract {
     "view"
   >;
 
-  makeBalancePubliclyDecryptable: TypedContractMethod<
-    [],
-    [string],
-    "nonpayable"
-  >;
-
-  makeBalancePubliclyDecryptableFor: TypedContractMethod<
-    [account: AddressLike],
-    [string],
-    "nonpayable"
-  >;
-
   name: TypedContractMethod<[], [string], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -662,12 +632,6 @@ export interface EBucks extends BaseContract {
     [boolean],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "makeBalancePubliclyDecryptable"
-  ): TypedContractMethod<[], [string], "nonpayable">;
-  getFunction(
-    nameOrSignature: "makeBalancePubliclyDecryptableFor"
-  ): TypedContractMethod<[account: AddressLike], [string], "nonpayable">;
   getFunction(
     nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;

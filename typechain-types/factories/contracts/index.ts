@@ -2,6 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as eBatcherUpgradableSol from "./eBatcherUpgradable.sol";
-export { EBatcher7984__factory } from "./EBatcher7984__factory";
 export { EBucks__factory } from "./EBucks__factory";
 export { EWETH__factory } from "./EWETH__factory";
