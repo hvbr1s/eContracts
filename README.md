@@ -5,6 +5,7 @@ Smart contracts for batching confidential token transfers using Zama's FHE techn
 ## Deployed Contracts (Sepolia)
 
 **eBatcherUpgradeable**
+
 - Proxy: `0x49239Eaf11c688152996a2A380AB715ac3583A4b`
 - Implementation: `0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea`
 
@@ -21,7 +22,8 @@ Smart contracts for batching confidential token transfers using Zama's FHE techn
 
 ## Web Interface
 
-A minimalistic Windows 95-inspired web interface is available in the [public/](public/) folder for interacting with the batch transfer contracts.
+A minimalistic Windows 95-inspired web interface is available in the [public/](public/) folder for interacting with the
+batch transfer contracts.
 
 ### Features
 
@@ -137,7 +139,8 @@ npx http-server public -p 8080
 
 #### FHEVM Instance Persistence
 
-The FHEVM instance is initialized when you connect your wallet and will persist throughout your session. The instance includes:
+The FHEVM instance is initialized when you connect your wallet and will persist throughout your session. The instance
+includes:
 
 - Chain ID configuration
 - Public key from the Gateway contract
@@ -231,7 +234,7 @@ See [hardhat.config.ts](hardhat.config.ts) for full configuration.
 
 ```bash
 forge verify-contract \
-  0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea \
+  0xd76951e847b7AFE761c4768405851848b5Bcf143 \
   contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
   --chain sepolia \
   --compiler-version 0.8.27 \
@@ -244,7 +247,7 @@ forge verify-contract \
 
 ```bash
 forge verify-contract \
-  0x11990923083aE0365Fb713922C506C396Bb6a29d \
+  0x09cC7E09aB4905e5577936783cB71323f077b590 \
   contracts/eWETH.sol:eWETH \
   --chain sepolia \
   --compiler-version 0.8.27 \
@@ -254,10 +257,26 @@ forge verify-contract \
   --watch
 ```
 
-### Verify eBucks
+### Verify eBucks (Hardhat)
 
 ```bash
-npx hardhat verify --network sepolia 0x0a10119bb664d9A153bd55F8d234c888C76181CC
+npx hardhat verify --network sepolia 0x09cC7E09aB4905e5577936783cB71323f077b590
+```
+
+### Verify eWrapper (Hardhat)
+
+```bash
+npx hardhat verify \
+  --network sepolia \
+  0xA968CbF4162aABEc9eDA0645382df0c2CBb47eA1 \
+  "Encrypted Wrapped Ether" "eWETH" ""
+```
+
+### Verify eBatcher Implementation (Hardhat)
+```bash
+npx hardhat verify --network sepolia \
+  --contract contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
+  0xd76951e847b7AFE761c4768405851848b5Bcf143
 ```
 
 For proxy verification, use Etherscan's "Verify as Proxy" feature after verifying the implementation.

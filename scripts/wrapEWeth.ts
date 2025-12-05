@@ -24,7 +24,7 @@ const EWETH_ABI = [
 
 async function main() {
   // HARDCODED VALUES - Change these as needed
-  const action: "deposit" | "withdraw" = "deposit";
+  const action: "deposit" | "withdraw" = "withdraw";
   const amount = "1000000000000000"; // amount in wei (0.001 ETH)
 
   try {

@@ -32,7 +32,7 @@ async function main() {
   console.log("👤 Wallet address:", wallet.address);
 
   // Configuration - update with your deployed eBucks contract address
-  const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS || "0xf56E699703A1e8128567a109CA41dA7B175A3570";
+  const TOKEN_ADDRESS = process.env.EWETH_CONTRACT || "0x4228F4179a3354071f03d951eA84194283dED27C";
   console.log("🪙 eBucks token address:", TOKEN_ADDRESS);
 
   // Get the eBucks contract with the wallet as signer
