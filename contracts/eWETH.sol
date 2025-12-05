@@ -10,12 +10,19 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
  * @notice A wrapped ETH implementation with encrypted balances using FHE (Fully Homomorphic Encryption)
  *
  * IMPORTANT CONSTRAINTS:
- * - This contract uses euint64 for encrypted balances, which can only store values up to 2^64 - 1 wei
- * - Maximum deposit/balance: 18.44 ETH (18,446,744,073,709,551,615 wei)
- * - Decimals: 18 (standard ETH decimals), but capacity is limited by euint64
- * - Deposits exceeding uint64 max will revert
+ * - This contract uses euint64 for encrypted balances, which can only store values up to 2^64 - 1 token units
+ * - Token has 6 decimals (inherited from ERC7984), while ETH has 18 decimals
+ * - Maximum deposit: ~18.44 million ETH (uint64 max with 6 decimals = 18,446,744,073,709 tokens = 18.44M ETH)
+ * - Conversion: 1 ETH (10^18 wei) = 1 eWETH (10^6 token units)
  */
 contract eWETH is ZamaEthereumConfig, ERC7984 {
+    uint256 private constant DECIMALS_CONVERSION = 10 ** 12;
+
+    error DepositTooSmall();
+    error DepositExceedsMaximum();
+    error InvalidWithdrawalRequest();
+    error ETHTransferFailed();
+
     event Deposit(address indexed dest, uint256 amount);
     event Withdrawal(address indexed source, euint64 amount);
     event WithdrawalRequested(address indexed source, bytes32 indexed handle);
@@ -43,12 +50,16 @@ contract eWETH is ZamaEthereumConfig, ERC7984 {
 
     /**
      * @notice Deposit ETH and receive encrypted wrapped ETH tokens
-     * @dev Deposit amount is limited to uint64 max (~18.44 ETH) due to euint64 encryption constraints
-     * Attempting to deposit more will revert to prevent overflow and fund loss
+     * @dev Converts ETH (18 decimals) to eWETH (6 decimals) by dividing by 10^12
+     * Maximum deposit is ~18.44 million ETH due to euint64 constraints
      */
     function deposit() public payable {
-        require(msg.value <= type(uint64).max, "Deposit amount exceeds uint64 max");
-        euint64 eDepositedAmount = FHE.asEuint64(uint64(msg.value));
+        // Convert from 18 decimals (wei) to 6 decimals (token units)
+        uint256 tokenAmount = msg.value / DECIMALS_CONVERSION;
+        if (tokenAmount == 0) revert DepositTooSmall();
+        if (tokenAmount > type(uint64).max) revert DepositExceedsMaximum();
+
+        euint64 eDepositedAmount = FHE.asEuint64(uint64(tokenAmount));
         _mint(msg.sender, eDepositedAmount);
         emit Deposit(msg.sender, msg.value);
     }
@@ -60,7 +71,7 @@ contract eWETH is ZamaEthereumConfig, ERC7984 {
      * @dev Initiates a withdrawal request by making the ciphertext publicly decryptable
      * The user must then call completeWithdrawal() with the decrypted value and proof
      */
-    function withdraw(externalEuint64 amount, bytes memory inputProof) external {
+    function withdraw(externalEuint64 amount, bytes calldata inputProof) external {
         euint64 eWithdrawnAmount = FHE.fromExternal(amount, inputProof);
 
         // Make the ciphertext publicly decryptable
@@ -78,29 +89,33 @@ contract eWETH is ZamaEthereumConfig, ERC7984 {
     /**
      * @notice Complete withdrawal after off-chain decryption
      * @param handle The handle of the encrypted amount (from WithdrawalRequested event)
-     * @param cleartexts The decrypted withdrawal amount (obtained via publicDecrypt off-chain)
+     * @param cleartexts The decrypted withdrawal amount in token units (obtained via publicDecrypt off-chain)
      * @param decryptionProof Cryptographic proof from KMS for verification
      * @dev This function verifies KMS signatures and completes the ETH transfer to the user
+     * Converts token units (6 decimals) back to wei (18 decimals) before sending ETH
      * The user/relayer must first call publicDecrypt() off-chain to obtain cleartexts and proof
      */
-    function completeWithdrawal(bytes32 handle, bytes memory cleartexts, bytes memory decryptionProof) external {
+    function completeWithdrawal(bytes32 handle, bytes calldata cleartexts, bytes calldata decryptionProof) external {
         // Get the withdrawal request
-        WithdrawalRequest storage request = withdrawalRequests[handle];
-        require(request.isPending, "Invalid or already processed request");
+        WithdrawalRequest memory request = withdrawalRequests[handle];
+        if (!request.isPending) revert InvalidWithdrawalRequest();
+
+        // Decode the decrypted amount (in token units with 6 decimals)
+        uint64 withdrawnTokenAmount = abi.decode(cleartexts, (uint64));
 
         // Verify signatures from KMS
-        bytes32[] memory handlesList = new bytes32[](1);
-        handlesList[0] = handle;
-        FHE.checkSignatures(handlesList, cleartexts, decryptionProof);
+        discloseEncryptedAmount(euint64.wrap(handle), withdrawnTokenAmount, decryptionProof);
 
-        // Decode the decrypted amount
-        uint64 withdrawnAmount = abi.decode(cleartexts, (uint64));
+        // Convert from 6 decimals (token units) to 18 decimals (wei)
+        uint256 withdrawnWeiAmount = uint256(withdrawnTokenAmount) * DECIMALS_CONVERSION;
 
-        (bool success, ) = request.user.call{value: withdrawnAmount}("");
-        require(success, "ETH transfer failed");
-        request.isPending = false;
+        // Delete the request and transfer ETH
+        delete withdrawalRequests[handle];
 
-        emit Withdrawal(request.user, FHE.asEuint64(withdrawnAmount));
+        (bool success, ) = request.user.call{value: withdrawnWeiAmount}("");
+        if (!success) revert ETHTransferFailed();
+
+        emit Withdrawal(request.user, FHE.asEuint64(withdrawnTokenAmount));
     }
 
     /**
@@ -111,19 +126,6 @@ contract eWETH is ZamaEthereumConfig, ERC7984 {
      */
     function makeBalancePubliclyDecryptable() external returns (euint64) {
         euint64 balance = confidentialBalanceOf(msg.sender);
-        FHE.makePubliclyDecryptable(balance);
-        return balance;
-    }
-
-    /**
-     * @notice Makes a specific account's balance publicly decryptable (anyone can call)
-     * @dev Useful for verification and debugging purposes in FHEVM v0.9
-     * Note: This allows public visibility of the encrypted balance once decrypted
-     * @param account The account whose balance to make publicly decryptable
-     * @return The encrypted balance handle that can now be publicly decrypted
-     */
-    function makeBalancePubliclyDecryptableFor(address account) external returns (euint64) {
-        euint64 balance = confidentialBalanceOf(account);
         FHE.makePubliclyDecryptable(balance);
         return balance;
     }

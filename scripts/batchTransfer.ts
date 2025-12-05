@@ -28,8 +28,8 @@ async function main() {
   console.log("👤 Wallet address:", wallet.address);
 
   // Configuration - update these with your deployed contract addresses
-  const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS || "";
-  const BATCHER_ADDRESS = process.env.BATCHER_ADDRESS || "";
+  const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS || "0xf56E699703A1e8128567a109CA41dA7B175A3570";
+  const BATCHER_ADDRESS = process.env.BATCHER_ADDRESS || "0x3bbDcC93e2E3dcDF9984afb5AEBaa3de52FE5591";
 
   if (!TOKEN_ADDRESS || !BATCHER_ADDRESS) {
     throw new Error("❌ Please set TOKEN_ADDRESS and BATCHER_ADDRESS environment variables");
@@ -44,7 +44,6 @@ async function main() {
     [
       "function setOperator(address operator, uint48 until) external",
       "function confidentialBalanceOf(address account) external view returns (uint256)",
-      "function makeBalancePubliclyDecryptable() external returns (uint256)",
     ],
     wallet,
   );
@@ -70,28 +69,59 @@ async function main() {
   console.log("📋 Recipients:", recipients);
   console.log("💰 Amount per recipient:", amountPerRecipient.toString());
 
-  // Step 1: Check initial balance (FHEVM v0.9 way)
+  // Step 1: Check initial balance using user decryption
   console.log("\n📊 Step 1: Checking wallet balance...");
   console.log("⚡ Wallet ETH balance:", ethersLib.formatEther(await provider.getBalance(wallet.address)), "ETH");
 
   try {
-    // First, make the balance publicly decryptable
-    console.log("📝 Making balance publicly decryptable...");
-    const makeTx = await token.makeBalancePubliclyDecryptable();
-    await makeTx.wait();
-    console.log("✅ Balance marked as publicly decryptable");
-
-    // Wait a moment for the coprocessor to process
-    console.log("⏳ Waiting for coprocessor to process...");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Now decrypt it
+    // Get the encrypted balance handle
+    console.log("📦 Retrieving encrypted balance handle...");
     const encryptedBalance = await token.confidentialBalanceOf(wallet.address);
-    const balanceHandle = ethersLib.toBeHex(encryptedBalance, 32);
-    console.log("📦 Encrypted balance handle:", balanceHandle);
+    const ciphertextHandle = ethersLib.toBeHex(encryptedBalance, 32);
+    console.log("📦 Encrypted balance handle:", ciphertextHandle);
 
-    const decryptionResult = await hre.fhevm.publicDecrypt([balanceHandle]);
-    const decryptedBalance = decryptionResult.clearValues[balanceHandle as `0x${string}`];
+    // Generate keypair for decryption
+    console.log("🔑 Generating decryption keypair...");
+    const keypair = hre.fhevm.generateKeypair();
+
+    // Prepare decryption request parameters
+    const contractAddress = TOKEN_ADDRESS;
+    const handleContractPairs = [
+      {
+        handle: ciphertextHandle,
+        contractAddress: contractAddress,
+      },
+    ];
+    const startTimeStamp = Math.floor(Date.now() / 1000).toString();
+    const durationDays = "10";
+    const contractAddresses = [contractAddress];
+
+    // Create EIP-712 signature
+    console.log("✍️  Creating and signing EIP-712 request...");
+    const eip712 = hre.fhevm.createEIP712(keypair.publicKey, contractAddresses, startTimeStamp, durationDays);
+
+    const signature = await wallet.signTypedData(
+      eip712.domain,
+      {
+        UserDecryptRequestVerification: eip712.types.UserDecryptRequestVerification,
+      },
+      eip712.message,
+    );
+
+    // Decrypt the balance using userDecrypt
+    console.log("🔓 Decrypting balance...");
+    const result = await hre.fhevm.userDecrypt(
+      handleContractPairs,
+      keypair.privateKey,
+      keypair.publicKey,
+      signature.replace("0x", ""),
+      contractAddresses,
+      wallet.address,
+      startTimeStamp,
+      durationDays,
+    );
+
+    const decryptedBalance = result[ciphertextHandle as `0x${string}`];
     console.log("✅ Decrypted token balance:", decryptedBalance?.toString() || "0");
 
     // Check if we have enough balance
@@ -114,13 +144,13 @@ async function main() {
   console.log("📦 Encrypted amount handle:", eAmountPerRecipient.handles[0]);
   console.log("🔐 Input proof length:", eAmountPerRecipient.inputProof?.length || 0);
 
-  // // Step 3: Set batcher as operator
-  // console.log("\n📝 Step 3: Setting batcher contract as operator...");
-  // const until = 0xffffffffffff; // Max uint48 value
-  // const operatorTx = await token.setOperator(BATCHER_ADDRESS, until);
-  // const operatorReceipt = await operatorTx.wait();
-  // console.log("🔗 SetOperator transaction hash:", operatorReceipt?.hash);
-  // console.log("✅ Operator set confirmed");
+  // Step 3: Set batcher as operator
+  console.log("\n📝 Step 3: Setting batcher contract as operator...");
+  const until = 0xffffffffffff; // Max uint48 value
+  const operatorTx = await token.setOperator(BATCHER_ADDRESS, until);
+  const operatorReceipt = await operatorTx.wait();
+  console.log("🔗 SetOperator transaction hash:", operatorReceipt?.hash);
+  console.log("✅ Operator set confirmed");
 
   // Step 4: Execute batch transfer
   console.log("\n📤 Step 4: Executing batch transfer...");

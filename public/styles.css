@@ -1,0 +1,222 @@
+/* Windows 95 Inspired Styles - Black on White */
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 11px;
+  background: teal;
+  color: black;
+}
+
+.window {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.title-bar {
+  background: black;
+  color: white;
+  padding: 3px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.title-bar-text {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.title-bar-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.title-bar-controls button {
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid black;
+  background: silver;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.window-body {
+  padding: 15px;
+  background: white;
+}
+
+/* Buttons */
+.btn, button {
+  padding: 4px 12px;
+  background: silver;
+  border: 2px solid;
+  border-color: white black black white;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  color: black;
+}
+
+.btn:active, button:active {
+  border-color: black white white black;
+  padding: 5px 11px 3px 13px;
+}
+
+.btn:disabled, button:disabled {
+  color: gray;
+  cursor: not-allowed;
+}
+
+/* Inputs */
+input[type="text"],
+textarea {
+  padding: 3px;
+  border: 2px solid;
+  border-color: black white white black;
+  font-family: inherit;
+  font-size: 11px;
+  background: white;
+  color: black;
+}
+
+textarea {
+  resize: vertical;
+  font-family: "Courier New", monospace;
+}
+
+/* Fieldsets */
+fieldset {
+  border: 2px groove white;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: white;
+}
+
+legend {
+  padding: 0 5px;
+  font-weight: bold;
+  color: black;
+}
+
+/* Field Rows */
+.field-row {
+  margin-bottom: 10px;
+}
+
+.field-row label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: bold;
+  color: black;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid black;
+  margin-bottom: 15px;
+  background: white;
+}
+
+.tab-button {
+  padding: 6px 12px;
+  background: silver;
+  border: 2px solid;
+  border-color: white black black white;
+  border-bottom: none;
+  cursor: pointer;
+  margin-right: 2px;
+  color: black;
+  font-weight: normal;
+}
+
+.tab-button.active {
+  background: white;
+  border-bottom: 2px solid white;
+  margin-bottom: -2px;
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Result Box */
+.result-box {
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid;
+  border-color: black white white black;
+  background: white;
+  min-height: 60px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: black;
+}
+
+.result-box:empty {
+  display: none;
+}
+
+/* Status Bar */
+.status-bar {
+  border-top: 2px solid black;
+  padding: 3px;
+  display: flex;
+  gap: 5px;
+  margin-top: 15px;
+  background: silver;
+}
+
+.status-bar-field {
+  padding: 2px 5px;
+  border: 2px solid;
+  border-color: black white white black;
+  margin: 0;
+  font-size: 10px;
+  background: white;
+  color: black;
+}
+
+/* Utility */
+small {
+  font-size: 9px;
+  color: #333;
+}
+
+/* Success/Error styling */
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+.warning {
+  color: #cc6600;
+}
+
+/* Loading animation */
+.loading::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}

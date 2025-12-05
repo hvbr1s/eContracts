@@ -21,9 +21,9 @@ const config: FordefiProviderConfig = {
 };
 
 async function main() {
-  let provider = await getProvider(config);
+  const provider = await getProvider(config);
   if (!provider) throw new Error("Failed to initialize provider");
-  let web3Provider = new hre.ethers.BrowserProvider(provider);
+  const web3Provider = new hre.ethers.BrowserProvider(provider);
 
   const deployer = await web3Provider.getSigner();
   console.log("Deployer address", await deployer.getAddress());
@@ -49,11 +49,11 @@ async function main() {
   } catch (error: any) {
     console.log("⚠️  Deployment timed out, but checking if it succeeded...");
     console.log("Error:", error.message);
-    // Try to get the address anyway
     try {
       proxyAddress = await proxy.getAddress();
       console.log("\n✅ Proxy deployed to:", proxyAddress);
     } catch (e) {
+      console.log(e);
       throw new Error("Failed to get proxy address after timeout");
     }
   }

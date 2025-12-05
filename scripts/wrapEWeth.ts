@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const PK = process.env.METAMASK_PK!;
-const EWETH_CONTRACT = "0xCd0025b9a243104c02a46223A8d5d7b84F8aF42D";
+const EWETH_CONTRACT = process.env.EWETH_CONTRACT!;
 
 const EWETH_ABI = [
   "function deposit() external payable",
