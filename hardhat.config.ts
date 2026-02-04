@@ -2,7 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@openzeppelin/hardhat-upgrades";
-import "@fhevm/hardhat-plugin";
+// import "@fhevm/hardhat-plugin"; // Disabled for mainnet - causes anvil_nodeInfo error
 import dotenv from 'dotenv';
 
 dotenv.config()
@@ -21,6 +21,10 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    ethereum: { 
+      url: "https://eth.llamarpc.com",
+      chainId: 1,
+    },
     base: { 
       url: "https://mainnet.base.org",
       chainId: 8453,
@@ -30,9 +34,18 @@ const config: HardhatUserConfig = {
       url: "https://ethereum-sepolia.publicnode.com",
       timeout: 60000,
     },
+    "ethereum-blockscout": {
+      url: "https://eth.llamarpc.com",
+      chainId: 1,
+    },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY!,
+      ethereum: process.env.ETHERSCAN_API_KEY!,
+      base: process.env.ETHERSCAN_API_KEY!,
+      "ethereum-blockscout": "no-api-key-needed"
+    },
     customChains: [
       {
         network: "base",
@@ -40,6 +53,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api.basescan.org/api",
           browserURL: "https://basescan.org"
+        }
+      },
+      {
+        network: "ethereum-blockscout",
+        chainId: 1,
+        urls: {
+          apiURL: "https://eth.blockscout.com/api",
+          browserURL: "https://eth.blockscout.com"
         }
       }
     ]

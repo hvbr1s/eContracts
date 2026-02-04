@@ -29,10 +29,10 @@
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@openzeppelin/contracts": "^5.4.0",
     "encrypted-types": "^0.0.4",
-    "openzeppelin-confidential-contracts": "github:OpenZeppelin/openzeppelin-confidential-contracts#v0.3.0"
+    "@openzeppelin/confidential-contracts": "^0.3.1"
   },
   "devDependencies": {
-    "@fhevm/hardhat-plugin": "^0.3.0-1",
+    "@fhevm/hardhat-plugin": "0.3.0-2",
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
     "@nomicfoundation/hardhat-ethers": "^3.1.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
@@ -45,7 +45,7 @@
     "@types/node": "^20.19.8",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
-    "@zama-fhe/relayer-sdk": "^0.3.0-5",
+    "@zama-fhe/relayer-sdk": "^0.3.0-6",
     "chai": "^4.5.0",
     "chai-as-promised": "^8.0.1",
     "cross-env": "^7.0.3",
@@ -75,7 +75,8 @@
     "compile": "npx hardhat compile",
     "clean": "npx hardhat clean",
     "deploy": "npx hardhat run --network sepolia deploy/deploy.ts",
-    "deploy-upgrade": "npx hardhat run --network sepolia deploy/deploy-upgradeable.ts",
+    "deploy-upgrade": "npx hardhat run --network ethereum deploy/deploy-upgradeable.ts",
+    "deploy-batcher": "npx hardhat run --network ethereum deploy/deploy-batcher.ts",
     "test": "npx hardhat test test/eBatcher.integration.test.ts",
     "batch": "npx hardhat run scripts/batchTransfer.ts --network sepolia",
     "wrap": "npx hardhat run scripts/wrapEWeth.ts --network sepolia",

@@ -102,6 +102,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReentrancyGuard__factory>;
+    getContractFactory(
+      name: "EBatcher7984",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EBatcher7984__factory>;
+    getContractFactory(
       name: "EBatcher7984Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EBatcher7984Upgradeable__factory>;
@@ -237,6 +245,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
+      name: "ReentrancyGuard",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReentrancyGuard>;
+    getContractAt(
+      name: "EBatcher7984",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EBatcher7984>;
+    getContractAt(
       name: "EBatcher7984Upgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -356,6 +374,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
     deployContract(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
+      name: "EBatcher7984",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EBatcher7984>;
+    deployContract(
       name: "EBatcher7984Upgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EBatcher7984Upgradeable>;
@@ -490,6 +516,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
+    deployContract(
+      name: "ReentrancyGuard",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
+      name: "EBatcher7984",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EBatcher7984>;
     deployContract(
       name: "EBatcher7984Upgradeable",
       args: any[],

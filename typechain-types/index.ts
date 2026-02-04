@@ -54,6 +54,10 @@ export type { ERC165 } from "./@openzeppelin/contracts/utils/introspection/ERC16
 export { ERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/ERC165__factory";
 export type { IERC165 } from "./@openzeppelin/contracts/utils/introspection/IERC165";
 export { IERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/IERC165__factory";
+export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
+export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
+export type { EBatcher7984 } from "./contracts/eBatcher.sol/EBatcher7984";
+export { EBatcher7984__factory } from "./factories/contracts/eBatcher.sol/EBatcher7984__factory";
 export type { EBatcher7984Upgradeable } from "./contracts/eBatcherUpgradable.sol/EBatcher7984Upgradeable";
 export { EBatcher7984Upgradeable__factory } from "./factories/contracts/eBatcherUpgradable.sol/EBatcher7984Upgradeable__factory";
 export type { EBucks } from "./contracts/EBucks";
