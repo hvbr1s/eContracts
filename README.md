@@ -2,11 +2,11 @@
 
 Smart contracts for batching confidential token transfers using Zama's FHE technology.
 
-## Deployed Contracts (Sepolia)
+## Deployed Contracts (Mainnet)
 
 **eBatcherUpgradeable**
 
-- Proxy: `0x49239Eaf11c688152996a2A380AB715ac3583A4b`
+- Proxy: `0x02121f53c2a00364b39c01bb2f31384d7f1a406d`
 - Implementation: `0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea`
 
 **eWrapper**: `0x11990923083aE0365Fb713922C506C396Bb6a29d`
@@ -272,14 +272,67 @@ npx hardhat verify \
   "Encrypted Wrapped Ether" "eWETH" ""
 ```
 
-### Verify eBatcher Implementation (Hardhat)
+### Verify eBatcher Implementation (Hardhat - Sepolia)
+
 ```bash
 npx hardhat verify --network sepolia \
   --contract contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
   0xd76951e847b7AFE761c4768405851848b5Bcf143
 ```
 
-For proxy verification, use Etherscan's "Verify as Proxy" feature after verifying the implementation.
+### Verify eBatcher Implementation (Hardhat - Mainnet)
+
+```bash
+npx hardhat verify --network ethereum \
+  --contract contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
+  0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea
+```
+
+### Verifying UUPS Upgradeable Proxies
+
+For UUPS proxy contracts, verification requires two steps: verifying the implementation contract, then linking the proxy on Etherscan.
+
+#### Step 1: Get the Implementation Address
+
+The proxy address is NOT the implementation. To find the implementation address:
+
+```bash
+npx hardhat console --network ethereum
+```
+
+Then run:
+
+```js
+const implAddr = await upgrades.erc1967.getImplementationAddress("0x02121f53c2a00364b39c01bb2f31384d7f1a406d")
+console.log(implAddr)
+// Output: 0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea
+```
+
+#### Step 2: Verify the Implementation Contract
+
+Verify at the **implementation address** (not the proxy). The implementation has no constructor arguments since initialization happens through the proxy:
+
+```bash
+npx hardhat verify --network ethereum \
+  --contract contracts/eBatcherUpgradable.sol:eBatcher7984Upgradeable \
+  <IMPLEMENTATION_ADDRESS>
+```
+
+#### Step 3: Link Proxy on Etherscan
+
+After verifying the implementation:
+
+1. Go to the proxy address on Etherscan (e.g., `https://etherscan.io/address/0x02121f53c2a00364b39c01bb2f31384d7f1a406d`)
+2. Click **"More Options"** → **"Is this a proxy?"**
+3. Click **"Verify"** - Etherscan will auto-detect the implementation
+4. This enables the **"Read as Proxy"** / **"Write as Proxy"** tabs
+
+#### Current Deployed Addresses (Mainnet)
+
+| Contract       | Address                                      |
+|----------------|----------------------------------------------|
+| Proxy          | `0x02121f53c2a00364b39c01bb2f31384d7f1a406d` |
+| Implementation | `0x9E7f92428119EdE16e514D9571D0a0AA74F55Cea` |
 
 ## Security
 

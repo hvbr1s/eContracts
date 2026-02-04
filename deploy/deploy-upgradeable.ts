@@ -7,17 +7,19 @@ import { FordefiProviderConfig } from "@fordefi/web3-provider";
 
 dotenv.config();
 
-const FORDEFI_API_USER_TOKEN = process.env.FORDEFI_API_USER_MACBOOK_PRO_BOT!;
-const PEM_PRIVATE_KEY = fs.readFileSync("./secrets/private2.pem", "utf8");
+const FORDEFI_API_USER_TOKEN = process.env.FORDEFI_API_USER_TOKEN!;
+const PEM_PRIVATE_KEY = fs.readFileSync("./secrets/private.pem", "utf8");
 const FORDEFI_EVM_VAULT_ADDRESS = process.env.FORDEFI_EVM_VAULT_ADDRESS!;
-const RPC_URL = process.env.ALCHEMY_RPC!;
+const RPC_URL = process.env.ALCHEMY_RPC_MAINNET!;
 
 const config: FordefiProviderConfig = {
   address: FORDEFI_EVM_VAULT_ADDRESS as `0x${string}`,
   apiUserToken: FORDEFI_API_USER_TOKEN,
   apiPayloadSignKey: PEM_PRIVATE_KEY,
-  chainId: 11155111,
+  chainId: 1,
   rpcUrl: RPC_URL,
+  skipPrediction: true,
+  timeoutDurationMs: 6000000 // 10 minutes
 };
 
 async function main() {
@@ -28,7 +30,7 @@ async function main() {
   const deployer = await web3Provider.getSigner();
   console.log("Deployer address", await deployer.getAddress());
 
-  const contractOwner = "0x5b7a034488F0BDE8bAD66f49cf9587ad40B6c757";
+  const contractOwner = process.env.FORDEFI_EVM_VAULT_ADDRESS;
 
   const factory = await hre.ethers.getContractFactory("eBatcher7984Upgradeable", deployer);
   console.log("Deploying upgradeable contract...");
@@ -38,7 +40,12 @@ async function main() {
     initializer: "initialize",
     kind: "uups",
     timeout: 600000, // 10 minutes
-    pollingInterval: 5000, // 5 seconds
+    pollingInterval: 5000, // 5 seconds.
+    txOverrides:{
+      gasLimit: 5000000n,
+      maxFeePerGas: 1000000000n,
+      maxPriorityFeePerGas: 1000000000n
+    }
   });
 
   let proxyAddress;
@@ -46,6 +53,7 @@ async function main() {
     await proxy.waitForDeployment();
     proxyAddress = await proxy.getAddress();
     console.log("\n✅ Proxy deployed to:", proxyAddress);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.log("⚠️  Deployment timed out, but checking if it succeeded...");
     console.log("Error:", error.message);

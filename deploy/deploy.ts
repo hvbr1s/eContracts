@@ -12,7 +12,7 @@ const FORDEFI_API_USER_TOKEN =
   (() => {
     throw new Error("FORDEFI_API_USER_TOKEN is not set");
   })();
-const privateKeyFilePath = "./secrets/private2.pem";
+const privateKeyFilePath = "./secrets/private.pem";
 const PEM_PRIVATE_KEY =
   fs.readFileSync(privateKeyFilePath, "utf8") ??
   (() => {
@@ -28,7 +28,7 @@ const config: FordefiProviderConfig = {
   address: FORDEFI_EVM_VAULT_ADDRESS as `0x${string}`,
   apiUserToken: FORDEFI_API_USER_TOKEN,
   apiPayloadSignKey: PEM_PRIVATE_KEY,
-  chainId: 11155111,
+  chainId: 1,
   rpcUrl: "https://ethereum-sepolia.publicnode.com",
 };
 
